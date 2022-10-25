@@ -8,7 +8,7 @@ namespace CS_Study
     {   
         static void Main(string[] args)
         {  
-
+            Console.WriteLine("Hello World");
         }
     }
 }
