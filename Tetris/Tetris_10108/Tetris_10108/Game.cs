@@ -67,10 +67,18 @@ namespace Tetris_10113
         {
             Singleton = new Game();// 내부에선 인스턴스 생성자 호출
         }
+
+        Random random;
+
         Game() // 인스턴스 생성자
         {
+            random = new Random();
+            diagrams.Clear();
             for(int i = 0; i < 10; i++)
-                diagrams.Enqueue(new Diagram());
+            {
+                Diagram dia = new Diagram(random);
+                diagrams.Enqueue(dia);
+            }
 
             now = diagrams.Dequeue(); // 게임 시작하면서 (게임 인스턴스 만들면서) 도형을 만들고 출발
 
@@ -79,6 +87,14 @@ namespace Tetris_10113
 
         private void SetNextBlock(int bn, int turn)
         {
+            for (int xx = 0; xx < 4; xx++)
+            {
+                for (int yy = 0; yy < 4; yy++)
+                {
+                    gboard.NextBlockBoard[xx, yy] = 0;
+                }
+            }
+
             for (int xx = 0; xx < 4; xx++)
             {
                 for (int yy = 0; yy < 4; yy++)
@@ -184,9 +200,10 @@ namespace Tetris_10113
 
         internal bool Next() // 벽돌이 맨밑에 오면 다음 벽돌을 선택
         {
-            if (diagrams.Count == 0) diagrams.Enqueue(new Diagram());
+            if (diagrams.Count == 1) diagrams.Enqueue(new Diagram(random));
 
             now = diagrams.Dequeue();
+            SetNextBlock(diagrams.First().BlockNum, diagrams.First().Turn);
 
             return gboard.MoveEnable(now.BlockNum, Turn, now.X, now.Y); //벽돌이 위까지 차서 새 도형이 나올 공간 없는 경우
         }

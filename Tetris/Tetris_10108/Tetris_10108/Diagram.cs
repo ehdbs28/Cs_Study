@@ -34,14 +34,14 @@ namespace Tetris_10113
 
         internal Color BlockColor { get; private set; }
 
-        internal Diagram()
+        internal Diagram(Random random)
         {
-            Reset();
+            Reset(random);
+            Console.WriteLine(BlockNum);
         }
 
-        internal void Reset()
+        internal void Reset(Random random)
         {
-            Random random = new Random();
             BlockColor = Color.FromArgb(random.Next(0, 256), random.Next(0, 256), random.Next(0, 256));
             X = GameRule.SX;  // 4 
             Y = GameRule.SY;  // 0

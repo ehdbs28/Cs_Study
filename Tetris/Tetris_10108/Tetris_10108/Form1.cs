@@ -45,11 +45,11 @@ namespace Tetris_10113
         {
             DrawGraduation(e.Graphics);
             DrawGraduatioonNextBoard(e.Graphics);
+            DrawDiagramEndPos(e.Graphics);
             DrawDiagram(e.Graphics);
             DoubleBuffered = true;
             DrawBoard(e.Graphics);
             DrawNextBlockBoard(e.Graphics);
-            DrawDiagramEndPos(e.Graphics);
         }
 
         private void DrawBoard(Graphics graphics)
@@ -108,7 +108,7 @@ namespace Tetris_10113
 
         private void DrawDiagramEndPos(Graphics graphics)
         {
-            Pen dpen = new Pen(Color.Black, 4);
+            Pen dpen = new Pen(Color.Black, 2);
             Point now = game.NowPosition;
             int bn = game.BlockNum;
             int tn = game.Turn;
