@@ -37,7 +37,6 @@ namespace Tetris_10113
         internal Diagram(Random random)
         {
             Reset(random);
-            Console.WriteLine(BlockNum);
         }
 
         internal void Reset(Random random)
