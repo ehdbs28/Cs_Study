@@ -18,6 +18,9 @@ namespace Tetris_10113
         int by;
         int bwidth;
         int bheight;
+        int nextBoxSize;
+        int nextBoxStart_X;
+        int nextBoxEnd_X;
 
         public Form1()
         {
@@ -32,15 +35,20 @@ namespace Tetris_10113
             by = GameRule.BY;
             bwidth = GameRule.B_WIDTH;
             bheight = GameRule.B_HEIGHT;
-            SetClientSizeCore(bx * bwidth, by * bheight);
+            nextBoxSize = GameRule.NextBlockBoxSize;
+            nextBoxStart_X = GameRule.NextBlockBoxStart_X;
+            nextBoxEnd_X = GameRule.NextBlockBoxEnd_X;
+            SetClientSizeCore(nextBoxEnd_X * bwidth, by * bheight);
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             DrawGraduation(e.Graphics);
+            DrawGraduatioonNextBoard(e.Graphics);
             DrawDiagram(e.Graphics);
             DoubleBuffered = true;
             DrawBoard(e.Graphics);
+            DrawNextBlockBoard(e.Graphics);
             DrawDiagramEndPos(e.Graphics);
         }
 
@@ -55,6 +63,22 @@ namespace Tetris_10113
                         Rectangle now_rt = new Rectangle(xx * bwidth + 2, yy * bheight + 2, bwidth - 4, bheight - 4);
                         graphics.DrawRectangle(Pens.Green, now_rt);
                         graphics.FillRectangle(new SolidBrush(game.AlreadyStoreBlockColor[xx, yy]), now_rt);
+                    }
+                }
+            }
+        }
+
+        private void DrawNextBlockBoard(Graphics graphics)
+        {
+            for(int xx = 0; xx < 4; xx++)
+            {
+                for(int yy = 0; yy < 4; yy++)
+                {
+                    if(game.NextBlockBoard[xx, yy] != 0)
+                    {
+                        Rectangle now_rt = new Rectangle(xx * bwidth + 2 + nextBoxStart_X * bwidth, yy * bheight + 2, bwidth - 4, bheight - 4);
+                        graphics.DrawRectangle(Pens.Green, now_rt);
+                        graphics.FillRectangle(new SolidBrush(game.Diagrams.First().BlockColor), now_rt);
                     }
                 }
             }
@@ -115,35 +139,41 @@ namespace Tetris_10113
 
         private void DrawGraduation(Graphics graphics)
         {
-            DrawHorizons(graphics);
-            DrawDiagramVerticals(graphics);
+            DrawHorizons(graphics, 0, by, 0, bx);
+            DrawDiagramVerticals(graphics, 0, bx, by);
         }
 
-        private void DrawDiagramVerticals(Graphics graphics) // 수직선 그리는 메서드
+        private void DrawGraduatioonNextBoard(Graphics graphics)
+        {
+            DrawHorizons(graphics, 0, nextBoxSize, nextBoxStart_X, nextBoxEnd_X);
+            DrawDiagramVerticals(graphics, nextBoxStart_X, nextBoxEnd_X, nextBoxSize);
+        }
+
+        private void DrawDiagramVerticals(Graphics graphics, int str_X, int end_X, int end_Y) // 수직선 그리는 메서드
         {
             Point st = new Point(); // 시작점
             Point et = new Point(); // 끝점
 
-            for(int cx = 0; cx < bx; cx++)
+            for(int cx = str_X; cx <= end_X; cx++)
             {
                 st.X = cx * bwidth;
                 st.Y = 0;
                 et.X = st.X;
-                et.Y = by * bheight;
+                et.Y = end_Y * bheight;
                 graphics.DrawLine(Pens.Blue, st, et);
             }
         }
 
-        private void DrawHorizons(Graphics graphics) // 수평선 메서드
+        private void DrawHorizons(Graphics graphics, int str_Y, int end_Y, int str_X, int end_X) // 수평선 메서드
         {
             Point st = new Point();
             Point et = new Point();
 
-            for(int cy = 0; cy <by; cy++)
+            for(int cy = str_Y; cy <= end_Y; cy++)
             {
-                st.X = 0;
+                st.X = str_X * bwidth;
                 st.Y = cy * bheight;
-                et.X = bx * bwidth;
+                et.X = end_X * bwidth;
                 et.Y = st.Y;
                 graphics.DrawLine(Pens.Brown, st, et);
             }

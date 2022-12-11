@@ -14,5 +14,9 @@ namespace Tetris_10113
         internal const int BY = 20; //벽돌이 움직일 수 있는 높이.
         internal const int SX = 4; //시작 x 좌표
         internal const int SY = 0; //시작 y 좌표
+
+        internal const int NextBlockBoxSize = 4;
+        internal const int NextBlockBoxStart_X = 15;
+        internal const int NextBlockBoxEnd_X = 19;
     }
 }

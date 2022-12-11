@@ -20,9 +20,11 @@ namespace Tetris_10113
         }
 
         int[,] board = new int[GameRule.BX, GameRule.BY];
+        int[,] nextBlockBoard = new int[GameRule.NextBlockBoxSize, GameRule.NextBlockBoxSize];
         Color[,] alreadyStoreBlockColor = new Color[GameRule.BX, GameRule.BY];
 
         internal Color[,] AlreadySroteBlockColor => alreadyStoreBlockColor;
+        internal int[,] NextBlockBoard => nextBlockBoard;
 
         internal int this[int x, int y] // 인덱서
         {
