@@ -48,6 +48,7 @@ namespace Tetris_10113
             Turn = random.Next() % 4; // 어떤 도형의 네 가지 회전 상태 중 하나를 랜덤하게 받아옴
             BlockNum = random.Next() %7;   
         }
+
         internal void MoveLeft()
         {
             X--;

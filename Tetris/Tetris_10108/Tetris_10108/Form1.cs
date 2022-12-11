@@ -93,14 +93,21 @@ namespace Tetris_10113
             {
                 for(int yy = 0; yy < 4; yy++)
                 {
-                    for(int endY = 0; endY < by; endY++)
+                    for(int endY = now.Y; endY < by - 3; endY++)
                     {
-                        if()
-                    }
-                    if(BlockValue.bvals[bn, tn, xx, yy] != 0)
-                    {
-                        Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, (by + yy) * bheight, bwidth - 4, bheight - 4);
-                        graphics.DrawRectangle(dpen, end_rt);
+                        if (board.MoveEnable(bn, tn, now.X, endY) && endY != 16)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if(BlockValue.bvals[bn, tn, xx, yy] != 0)
+                            {
+                                Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, (endY + yy - 1) * bheight + 2, bwidth - 4, bheight - 4);
+                                graphics.DrawRectangle(dpen, end_rt);
+                                break;
+                            }
+                        }
                     }
                 }
             }
