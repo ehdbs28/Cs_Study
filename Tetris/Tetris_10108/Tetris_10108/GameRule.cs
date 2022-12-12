@@ -18,5 +18,11 @@ namespace Tetris_10113
         internal const int NextBlockBoxSize = 4;
         internal const int NextBlockBoxStart_X = 15;
         internal const int NextBlockBoxEnd_X = 19;
+
+        internal const int HoldBlockBoxSize = 4;
+        internal const int HoldBlockBoxStart_X = 15;
+        internal const int HoldBlockBoxEnd_X = 19;
+        internal const int HoldBlockBoxStart_Y = 6;
+        internal const int HoldBlockBoxEnd_Y = 10;
     }
 }

@@ -12,12 +12,12 @@ namespace Tetris_10113
         internal int X
         {
             get;
-            private set;
+            set;
         }
         internal int Y
         {
             get;
-            private set;
+            set;
         }
 
         internal int Turn //몇 번째 회전인지 나타냄.
@@ -45,7 +45,7 @@ namespace Tetris_10113
             X = GameRule.SX;  // 4 
             Y = GameRule.SY;  // 0
             Turn = random.Next() % 4; // 어떤 도형의 네 가지 회전 상태 중 하나를 랜덤하게 받아옴
-            BlockNum = random.Next() %7;   
+            BlockNum = random.Next() % 7;
         }
 
         internal void MoveLeft()

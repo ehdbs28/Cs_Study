@@ -10,6 +10,7 @@ namespace Tetris_10113
     internal class Game
     {
         Diagram now; // null
+        Diagram hold;
         Queue<Diagram> diagrams = new Queue<Diagram>();
         Board gboard = Board.GameBoard; // 보드 공간
 
@@ -22,6 +23,7 @@ namespace Tetris_10113
         }
 
         internal Queue<Diagram> Diagrams => diagrams;
+        internal Diagram HoldBlock => hold;
 
         internal Color BlockColor => now.BlockColor;
 
@@ -56,6 +58,7 @@ namespace Tetris_10113
         }
 
         internal int[,] NextBlockBoard => gboard.NextBlockBoard;
+        internal int[,] HoldBlockBoard => gboard.HoldBolckBoard;
 
         internal static Game Singleton // static 이므로 유일성이 보장? 클래스에 소속되니까 ? 프로젝트 전반에 걸쳐 해당 클래스는 하나뿐
         {
@@ -85,13 +88,23 @@ namespace Tetris_10113
             SetNextBlock(diagrams.First().BlockNum, diagrams.First().Turn);
         }
 
+        internal bool AlreadyExistBlock(int blockNum)
+        {
+            foreach(Diagram dia in diagrams)
+            {
+                if (dia.BlockNum == blockNum) return false;
+            }
+
+            return true;
+        }
+
         private void SetNextBlock(int bn, int turn)
         {
             for (int xx = 0; xx < 4; xx++)
             {
                 for (int yy = 0; yy < 4; yy++)
                 {
-                    gboard.NextBlockBoard[xx, yy] = 0;
+                    NextBlockBoard[xx, yy] = 0;
                 }
             }
 
@@ -99,7 +112,45 @@ namespace Tetris_10113
             {
                 for (int yy = 0; yy < 4; yy++)
                 {
-                    gboard.NextBlockBoard[xx, yy] += BlockValue.bvals[bn, turn, xx, yy];
+                    NextBlockBoard[xx, yy] += BlockValue.bvals[bn, turn, xx, yy];
+                }
+            }
+        }
+
+        internal void Hold()
+        {
+            if(hold == null)
+            {
+                hold = now;
+                Next();
+            }
+            else
+            {
+                Diagram temp = now;
+                now = hold;
+                hold = temp;
+            }
+
+            hold.X = GameRule.SX;
+            hold.Y = GameRule.SY;
+            SetHoldBlock(hold.BlockNum, hold.Turn);
+        }
+
+        private void SetHoldBlock(int bn, int turn)
+        {
+            for (int xx = 0; xx < 4; xx++)
+            {
+                for (int yy = 0; yy < 4; yy++)
+                {
+                    HoldBlockBoard[xx, yy] = 0;
+                }
+            }
+
+            for (int xx = 0; xx < 4; xx++)
+            {
+                for (int yy = 0; yy < 4; yy++)
+                {
+                    HoldBlockBoard[xx, yy] += BlockValue.bvals[bn, turn, xx, yy];
                 }
             }
         }

@@ -21,6 +21,11 @@ namespace Tetris_10113
         int nextBoxSize;
         int nextBoxStart_X;
         int nextBoxEnd_X;
+        int holdBoxSize;
+        int holdBoxStart_X;
+        int holdBoxEnd_X;
+        int holdBoxStart_Y;
+        int holdBoxEnd_Y;
 
         public Form1()
         {
@@ -35,21 +40,30 @@ namespace Tetris_10113
             by = GameRule.BY;
             bwidth = GameRule.B_WIDTH;
             bheight = GameRule.B_HEIGHT;
+
             nextBoxSize = GameRule.NextBlockBoxSize;
             nextBoxStart_X = GameRule.NextBlockBoxStart_X;
             nextBoxEnd_X = GameRule.NextBlockBoxEnd_X;
+
+            holdBoxSize = GameRule.HoldBlockBoxSize;
+            holdBoxStart_X = GameRule.HoldBlockBoxStart_X;
+            holdBoxStart_Y = GameRule.HoldBlockBoxStart_Y;
+            holdBoxEnd_X = GameRule.HoldBlockBoxEnd_X;
+            holdBoxEnd_Y = GameRule.HoldBlockBoxEnd_Y;
             SetClientSizeCore(nextBoxEnd_X * bwidth, by * bheight);
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             DrawGraduation(e.Graphics);
-            DrawGraduatioonNextBoard(e.Graphics);
+            DrawGraduationNextBoard(e.Graphics);
+            DrawGraduationHoldBoard(e.Graphics);
             DrawDiagramEndPos(e.Graphics);
             DrawDiagram(e.Graphics);
             DoubleBuffered = true;
             DrawBoard(e.Graphics);
             DrawNextBlockBoard(e.Graphics);
+            DrawHoldBlockBoard(e.Graphics);
         }
 
         private void DrawBoard(Graphics graphics)
@@ -79,6 +93,22 @@ namespace Tetris_10113
                         Rectangle now_rt = new Rectangle(xx * bwidth + 2 + nextBoxStart_X * bwidth, yy * bheight + 2, bwidth - 4, bheight - 4);
                         graphics.DrawRectangle(Pens.Green, now_rt);
                         graphics.FillRectangle(new SolidBrush(game.Diagrams.First().BlockColor), now_rt);
+                    }
+                }
+            }
+        }
+
+        private void DrawHoldBlockBoard(Graphics graphics)
+        {
+            for (int xx = 0; xx < 4; xx++)
+            {
+                for (int yy = 0; yy < 4; yy++)
+                {
+                    if (game.HoldBlockBoard[xx, yy] != 0)
+                    {
+                        Rectangle now_rt = new Rectangle(xx * bwidth + 2 + holdBoxStart_X * bwidth, yy * bheight + 2 + holdBoxStart_Y * bheight, bwidth - 4, bheight - 4);
+                        graphics.DrawRectangle(Pens.Green, now_rt);
+                        graphics.FillRectangle(new SolidBrush(game.HoldBlock.BlockColor), now_rt);
                     }
                 }
             }
@@ -127,7 +157,36 @@ namespace Tetris_10113
                         {
                             if(BlockValue.bvals[bn, tn, xx, yy] != 0)
                             {
-                                Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, (endY + yy - 1) * bheight + 2, bwidth - 4, bheight - 4);
+                                int pos_Y = 0;
+                                if(endY == 16)
+                                {
+                                    for (int xxx = 0; xxx < 4; xxx++)
+                                    {
+                                        for (int yyy = 0; yyy < 4; yyy++)
+                                        {
+                                            if(yyy == 3)
+                                            {
+                                                if(xxx == 1 || xxx == 2)
+                                                {
+                                                    if(BlockValue.bvals[bn, tn, xxx, yyy] == 0)
+                                                    {
+                                                        pos_Y = endY + yy + 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        pos_Y = endY + yy;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    pos_Y = endY + yy - 1;
+                                }
+
+                                Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, pos_Y * bheight + 2, bwidth - 4, bheight - 4);
                                 graphics.DrawRectangle(dpen, end_rt);
                                 break;
                             }
@@ -140,16 +199,22 @@ namespace Tetris_10113
         private void DrawGraduation(Graphics graphics)
         {
             DrawHorizons(graphics, 0, by, 0, bx);
-            DrawDiagramVerticals(graphics, 0, bx, by);
+            DrawDiagramVerticals(graphics, 0, bx, 0,by);
         }
 
-        private void DrawGraduatioonNextBoard(Graphics graphics)
+        private void DrawGraduationNextBoard(Graphics graphics)
         {
             DrawHorizons(graphics, 0, nextBoxSize, nextBoxStart_X, nextBoxEnd_X);
-            DrawDiagramVerticals(graphics, nextBoxStart_X, nextBoxEnd_X, nextBoxSize);
+            DrawDiagramVerticals(graphics, nextBoxStart_X, nextBoxEnd_X, 0, nextBoxSize);
         }
 
-        private void DrawDiagramVerticals(Graphics graphics, int str_X, int end_X, int end_Y) // 수직선 그리는 메서드
+        private void DrawGraduationHoldBoard(Graphics graphics)
+        {
+            DrawHorizons(graphics, holdBoxStart_Y, holdBoxEnd_Y, holdBoxStart_X, holdBoxEnd_X);
+            DrawDiagramVerticals(graphics, holdBoxStart_X, holdBoxEnd_X, holdBoxStart_Y, holdBoxEnd_Y);
+        }
+
+        private void DrawDiagramVerticals(Graphics graphics, int str_X, int end_X, int str_Y, int end_Y) // 수직선 그리는 메서드
         {
             Point st = new Point(); // 시작점
             Point et = new Point(); // 끝점
@@ -157,7 +222,7 @@ namespace Tetris_10113
             for(int cx = str_X; cx <= end_X; cx++)
             {
                 st.X = cx * bwidth;
-                st.Y = 0;
+                st.Y = str_Y * bheight;
                 et.X = st.X;
                 et.Y = end_Y * bheight;
                 graphics.DrawLine(Pens.Blue, st, et);
@@ -188,7 +253,13 @@ namespace Tetris_10113
                 case Keys.Space: MoveDown(); return;
                 case Keys.Up: MoveTurn(); return;
                 case Keys.Down: MoveSSDown(); return;
+                case Keys.C: Hold(); return;
             }
+        }
+
+        private void Hold()
+        {
+            game.Hold();
         }
 
         private void MoveSSDown()
