@@ -157,36 +157,8 @@ namespace Tetris_10113
                         {
                             if(BlockValue.bvals[bn, tn, xx, yy] != 0)
                             {
-                                int pos_Y = 0;
-                                if(endY == 16)
-                                {
-                                    for (int xxx = 0; xxx < 4; xxx++)
-                                    {
-                                        for (int yyy = 0; yyy < 4; yyy++)
-                                        {
-                                            if(yyy == 3)
-                                            {
-                                                if(xxx == 1 || xxx == 2)
-                                                {
-                                                    if(BlockValue.bvals[bn, tn, xxx, yyy] == 0)
-                                                    {
-                                                        pos_Y = endY + yy + 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        pos_Y = endY + yy;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    pos_Y = endY + yy - 1;
-                                }
 
-                                Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, pos_Y * bheight + 2, bwidth - 4, bheight - 4);
+                                Rectangle end_rt = new Rectangle((now.X + xx) * bwidth + 2, (endY + yy - 1) * bheight + 2, bwidth - 4, bheight - 4);
                                 graphics.DrawRectangle(dpen, end_rt);
                                 break;
                             }
